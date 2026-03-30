@@ -26,6 +26,10 @@ tauri-plugin-sql = { version = "2", features = ["sqlite"] }
 tauri-plugin-clipboard-manager = "2"
 clipboard-master = "4"
 chrono = { version = "0.4", features = ["serde"] }
+arboard = "3"
+rusqlite = { version = "0.32", features = ["bundled"] }
+image = { version = "0.25", default-features = false, features = ["png"] }
+base64 = "0.22"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-autostart = "2"
