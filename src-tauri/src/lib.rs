@@ -9,6 +9,7 @@ use db::DbPath;
 use tauri::Manager; // Trait para app.path(), app.manage(), app.get_webview_window()
 use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
 use tauri::menu::{MenuBuilder, MenuItemBuilder};
+use tauri_plugin_global_shortcut::{GlobalShortcutExt, Shortcut};
 use tauri_plugin_sql::{Migration, MigrationKind};
 
 fn get_migrations() -> Vec<Migration> {
@@ -112,6 +113,28 @@ pub fn run() {
                     }
                 })
                 .build(app)?;
+
+            // ── Global Hotkey: Ctrl+Shift+V ──
+            // Registrar un atajo global que funciona incluso cuando la app no tiene foco.
+            // Ctrl+Shift+V toggle la ventana: si está oculta la muestra, si está visible la oculta.
+            let shortcut: Shortcut = "ctrl+shift+v".parse().expect("Invalid shortcut");
+            let app_handle = app.handle().clone();
+
+            app.global_shortcut().on_shortcut(shortcut, move |_app, _shortcut, event| {
+                // Solo reaccionar al evento "Pressed", ignorar "Released".
+                // Sin esto, la ventana se muestra al presionar y se oculta al soltar.
+                if event.state == tauri_plugin_global_shortcut::ShortcutState::Pressed {
+                    if let Some(window) = app_handle.get_webview_window("main") {
+                        if window.is_visible().unwrap_or(false) {
+                            let _ = window.hide();
+                        } else {
+                            let _ = window.show();
+                            let _ = window.center();
+                            let _ = window.set_focus();
+                        }
+                    }
+                }
+            })?;
 
             Ok(())
         })
