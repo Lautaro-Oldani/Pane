@@ -1,11 +1,11 @@
 {
-  "version": "0.1.1",
-  "notes": "Auto-updater, support page, production hardening, custom icon",
-  "pub_date": "2026-03-30T23:30:00Z",
+  "version": "0.1.2",
+  "notes": "Window shows on launch, larger default size",
+  "pub_date": "2026-03-31T00:00:00Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVRMHAzZEJaTzVLT0ZTeFBmeTJUNnpvUFVzb2VYRmNFUUJmWHlDMGJUU3hqZnBYUGNrT0Y1ZU9pTEdPMjg3blZiaVBudVAvVlpiWm5XanZ6emRUL0Jyb2RQR2M2dHRQMHdRPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzc0OTEzNTcyCWZpbGU6UGFuZV8wLjEuMV94NjQtc2V0dXAuZXhlCjA0dTdBdXdFVi9TRVNOcFhkTnN1RE5GNnlnRHg5VEYvKys5VTIyVVo2dUhNdXlGdjA5d1ljb2VkM0EyQ2ZUd24wZE5udUtQZjBuOVppUVZvODJWUkJ3PT0K",
-      "url": "https://github.com/Lautaro-Oldani/Pane/releases/download/v0.1.1/Pane_0.1.1_x64-setup.exe"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVRMHAzZEJaTzVLT0tMR2MxRlFSczVUeUQ0WXU1S1Nvdi9BOTVwUTBKT1RWR0Uzdy94OE5GRnZDNURhUkpqRHRQUmJLNURaVkRjZnIxMlRzRGZqN3hEMUxVeVdGZ0gzY2dNPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzc0OTE0NjY4CWZpbGU6UGFuZV8wLjEuMl94NjQtc2V0dXAuZXhlClpWaFMvbU5JZnk1SEo2aU51bkxTR0k4VjV6V0FRZGcxRzBETzNucE1IaHpJaHh1Mlk2a0ZvQ0hoR3d1OTdMN1RiTmhMbGVaL0dHOTMzM2w2VWtXekF3PT0K",
+      "url": "https://github.com/Lautaro-Oldani/Pane/releases/download/v0.1.2/Pane_0.1.2_x64-setup.exe"
     }
   }
 }
