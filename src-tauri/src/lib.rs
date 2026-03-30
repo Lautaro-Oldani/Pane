@@ -8,9 +8,9 @@ mod db;
 
 use db::DbPath;
 use std::sync::atomic::{AtomicBool, Ordering};
-use tauri::Manager;
-use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
 use tauri::menu::{MenuBuilder, MenuItemBuilder};
+use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
+use tauri::Manager;
 use tauri_plugin_global_shortcut::{GlobalShortcutExt, Shortcut};
 use tauri_plugin_sql::{Migration, MigrationKind};
 
@@ -50,10 +50,10 @@ fn hide_window(app: &tauri::AppHandle) {
     }
 }
 
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_updater::Builder::new().build())
         // ── Plugins ──────────────────────────────────────────
         .plugin(tauri_plugin_clipboard_manager::init())
         // Si ya hay una instancia corriendo, mostrar su ventana y cerrar esta.
@@ -103,13 +103,11 @@ pub fn run() {
                 .icon(tauri::include_image!("icons/32x32.png"))
                 .menu(&tray_menu)
                 .tooltip("Pane — Clipboard Manager")
-                .on_menu_event(|app, event| {
-                    match event.id().as_ref() {
-                        "show" => show_window(app),
-                        "hide" => hide_window(app),
-                        "quit" => app.exit(0),
-                        _ => {}
-                    }
+                .on_menu_event(|app, event| match event.id().as_ref() {
+                    "show" => show_window(app),
+                    "hide" => hide_window(app),
+                    "quit" => app.exit(0),
+                    _ => {}
                 })
                 .on_tray_icon_event(|tray, event| {
                     if let TrayIconEvent::Click {
@@ -127,12 +125,13 @@ pub fn run() {
             let shortcut: Shortcut = "ctrl+shift+v".parse().expect("Invalid shortcut");
             let app_handle = app.handle().clone();
 
-            app.global_shortcut().on_shortcut(shortcut, move |_app, _shortcut, event| {
-                if event.state == tauri_plugin_global_shortcut::ShortcutState::Pressed {
-                    // Siempre mostrar — Escape oculta desde el frontend
-                    show_window(&app_handle);
-                }
-            })?;
+            app.global_shortcut()
+                .on_shortcut(shortcut, move |_app, _shortcut, event| {
+                    if event.state == tauri_plugin_global_shortcut::ShortcutState::Pressed {
+                        // Siempre mostrar — Escape oculta desde el frontend
+                        show_window(&app_handle);
+                    }
+                })?;
 
             Ok(())
         })

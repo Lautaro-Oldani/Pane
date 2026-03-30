@@ -243,16 +243,14 @@ pub fn start_clipboard_monitor(app: AppHandle, db_path: PathBuf) {
         last_hash,
     };
 
-    std::thread::spawn(move || {
-        match Master::new(handler) {
-            Ok(mut master) => {
-                if let Err(e) = master.run() {
-                    eprintln!("Clipboard monitor crashed: {e}");
-                }
+    std::thread::spawn(move || match Master::new(handler) {
+        Ok(mut master) => {
+            if let Err(e) = master.run() {
+                eprintln!("Clipboard monitor crashed: {e}");
             }
-            Err(e) => {
-                eprintln!("Failed to create clipboard monitor: {e}");
-            }
+        }
+        Err(e) => {
+            eprintln!("Failed to create clipboard monitor: {e}");
         }
     });
 }

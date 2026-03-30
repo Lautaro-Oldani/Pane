@@ -11,6 +11,7 @@ import { SearchBar } from "./components/SearchBar";
 import { ClipList } from "./components/ClipList";
 import { Settings } from "./components/Settings";
 import { SupportCard } from "./components/SupportCard";
+import { UpdateBanner } from "./components/UpdateBanner";
 import "./App.css";
 
 function App() {
@@ -148,6 +149,7 @@ function MainView() {
         onOpenSupport={() => { setShowSupport(true); setShowSettings(false); }}
       />
       <main className="flex-1 flex flex-col min-w-0">
+        <UpdateBanner />
         {showSettings ? (
           <Settings
             settings={settings}

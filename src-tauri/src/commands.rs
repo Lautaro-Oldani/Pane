@@ -94,7 +94,12 @@ pub fn get_all_settings(db_path: State<DbPath>) -> Result<Vec<(String, String)>,
 }
 
 #[tauri::command]
-pub fn set_setting(app: tauri::AppHandle, db_path: State<DbPath>, key: String, value: String) -> Result<(), String> {
+pub fn set_setting(
+    app: tauri::AppHandle,
+    db_path: State<DbPath>,
+    key: String,
+    value: String,
+) -> Result<(), String> {
     db::set_setting(&db_path.0, &key, &value)?;
 
     // Si cambiaron autostart, aplicar de verdad
@@ -118,7 +123,11 @@ pub fn get_collections(db_path: State<DbPath>) -> Result<Vec<Collection>, String
 }
 
 #[tauri::command]
-pub fn create_collection(db_path: State<DbPath>, name: String, icon: Option<String>) -> Result<Collection, String> {
+pub fn create_collection(
+    db_path: State<DbPath>,
+    name: String,
+    icon: Option<String>,
+) -> Result<Collection, String> {
     db::create_collection(&db_path.0, &name, icon.as_deref())
 }
 
@@ -133,6 +142,10 @@ pub fn rename_collection(db_path: State<DbPath>, id: i64, name: String) -> Resul
 }
 
 #[tauri::command]
-pub fn set_clip_collection(db_path: State<DbPath>, clip_id: i64, collection_id: Option<i64>) -> Result<(), String> {
+pub fn set_clip_collection(
+    db_path: State<DbPath>,
+    clip_id: i64,
+    collection_id: Option<i64>,
+) -> Result<(), String> {
     db::set_clip_collection(&db_path.0, clip_id, collection_id)
 }

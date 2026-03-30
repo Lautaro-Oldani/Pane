@@ -55,7 +55,7 @@ fn row_to_clip(row: &rusqlite::Row) -> Result<Clip, rusqlite::Error> {
         image_base64: row.get(4)?,
         source_app: row.get(5)?,
         hash: row.get(6)?,
-        is_pinned: row.get::<_, i32>(7)? != 0,  // 0 -> false, 1 -> true
+        is_pinned: row.get::<_, i32>(7)? != 0, // 0 -> false, 1 -> true
         is_favorite: row.get::<_, i32>(8)? != 0,
         collection_id: row.get(9)?,
         created_at: row.get(10)?,
@@ -240,7 +240,11 @@ pub struct Collection {
 }
 
 /// Crea una nueva colección. Retorna la colección creada.
-pub fn create_collection(path: &PathBuf, name: &str, icon: Option<&str>) -> Result<Collection, String> {
+pub fn create_collection(
+    path: &PathBuf,
+    name: &str,
+    icon: Option<&str>,
+) -> Result<Collection, String> {
     let conn = open(path)?;
     conn.execute(
         "INSERT INTO collections (name, icon) VALUES (?1, ?2)",
@@ -252,12 +256,14 @@ pub fn create_collection(path: &PathBuf, name: &str, icon: Option<&str>) -> Resu
     conn.query_row(
         "SELECT id, name, icon, created_at FROM collections WHERE id = ?1",
         params![id],
-        |row| Ok(Collection {
-            id: row.get(0)?,
-            name: row.get(1)?,
-            icon: row.get(2)?,
-            created_at: row.get(3)?,
-        }),
+        |row| {
+            Ok(Collection {
+                id: row.get(0)?,
+                name: row.get(1)?,
+                icon: row.get(2)?,
+                created_at: row.get(3)?,
+            })
+        },
     )
     .map_err(|e| format!("Query error: {e}"))
 }
@@ -270,12 +276,14 @@ pub fn get_collections(path: &PathBuf) -> Result<Vec<Collection>, String> {
         .map_err(|e| format!("Prepare error: {e}"))?;
 
     let collections: Vec<Collection> = stmt
-        .query_map([], |row| Ok(Collection {
-            id: row.get(0)?,
-            name: row.get(1)?,
-            icon: row.get(2)?,
-            created_at: row.get(3)?,
-        }))
+        .query_map([], |row| {
+            Ok(Collection {
+                id: row.get(0)?,
+                name: row.get(1)?,
+                icon: row.get(2)?,
+                created_at: row.get(3)?,
+            })
+        })
         .map_err(|e| format!("Query error: {e}"))?
         .collect::<Result<Vec<_>, _>>()
         .map_err(|e| format!("Row error: {e}"))?;
@@ -303,7 +311,11 @@ pub fn rename_collection(path: &PathBuf, id: i64, name: &str) -> Result<(), Stri
 }
 
 /// Asigna un clip a una colección (o lo saca si collection_id es None).
-pub fn set_clip_collection(path: &PathBuf, clip_id: i64, collection_id: Option<i64>) -> Result<(), String> {
+pub fn set_clip_collection(
+    path: &PathBuf,
+    clip_id: i64,
+    collection_id: Option<i64>,
+) -> Result<(), String> {
     let conn = open(path)?;
     conn.execute(
         "UPDATE clips SET collection_id = ?1 WHERE id = ?2",

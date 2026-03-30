@@ -52,8 +52,10 @@ fn is_color(text: &str) -> bool {
 
     // Funciones CSS: rgb(), rgba(), hsl(), hsla()
     let lower = text.to_lowercase();
-    if (lower.starts_with("rgb(") || lower.starts_with("rgba(")
-        || lower.starts_with("hsl(") || lower.starts_with("hsla("))
+    if (lower.starts_with("rgb(")
+        || lower.starts_with("rgba(")
+        || lower.starts_with("hsl(")
+        || lower.starts_with("hsla("))
         && lower.ends_with(')')
     {
         return true;
@@ -108,13 +110,37 @@ fn is_code(text: &str) -> bool {
 
     // Keywords de programación comunes
     let keywords = [
-        "function ", "const ", "let ", "var ", "import ", "export ",
-        "class ", "interface ", "type ", "enum ", "struct ",
-        "def ", "fn ", "pub ", "async ", "await ",
-        "return ", "if ", "else ", "for ", "while ",
-        "try ", "catch ", "throw ", "new ",
-        "console.log", "println!", "print(",
-        "require(", "from '", "from \"",
+        "function ",
+        "const ",
+        "let ",
+        "var ",
+        "import ",
+        "export ",
+        "class ",
+        "interface ",
+        "type ",
+        "enum ",
+        "struct ",
+        "def ",
+        "fn ",
+        "pub ",
+        "async ",
+        "await ",
+        "return ",
+        "if ",
+        "else ",
+        "for ",
+        "while ",
+        "try ",
+        "catch ",
+        "throw ",
+        "new ",
+        "console.log",
+        "println!",
+        "print(",
+        "require(",
+        "from '",
+        "from \"",
     ];
 
     for kw in &keywords {
@@ -125,9 +151,8 @@ fn is_code(text: &str) -> bool {
 
     // Patrones sintácticos
     let syntax_patterns = [
-        "=> {", "=> ", "->", "===", "!==", "#{", "${",
-        " = {", "();", ");", "};", "];",
-        "/**", "///", "//", "/*",
+        "=> {", "=> ", "->", "===", "!==", "#{", "${", " = {", "();", ");", "};", "];", "/**",
+        "///", "//", "/*",
     ];
 
     for pat in &syntax_patterns {
@@ -178,8 +203,14 @@ mod tests {
 
     #[test]
     fn test_code() {
-        assert_eq!(detect_content_type("function hello() {\n  return 'hi';\n}"), "code");
-        assert_eq!(detect_content_type("const x = () => {\n  console.log('test');\n};"), "code");
+        assert_eq!(
+            detect_content_type("function hello() {\n  return 'hi';\n}"),
+            "code"
+        );
+        assert_eq!(
+            detect_content_type("const x = () => {\n  console.log('test');\n};"),
+            "code"
+        );
         assert_eq!(detect_content_type("import React from 'react';"), "code");
     }
 
