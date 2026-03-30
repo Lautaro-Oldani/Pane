@@ -28,21 +28,22 @@ fn get_migrations() -> Vec<Migration> {
     }]
 }
 
-/// Muestra la ventana principal y le da foco.
-/// Maneja todos los casos: oculta, minimizada, o sin foco.
+/// Muestra la ventana principal: restaura, centra, foco, always on top.
 fn show_window(app: &tauri::AppHandle) {
     if let Some(window) = app.get_webview_window("main") {
-        let _ = window.unminimize(); // Por si está minimizada
-        let _ = window.show();       // Por si está oculta (hide)
+        let _ = window.unminimize();
+        let _ = window.show();
         let _ = window.center();
+        let _ = window.set_always_on_top(true);
         let _ = window.set_focus();
         WINDOW_VISIBLE.store(true, Ordering::Relaxed);
     }
 }
 
-/// Oculta la ventana principal.
+/// Oculta la ventana principal y quita always on top.
 fn hide_window(app: &tauri::AppHandle) {
     if let Some(window) = app.get_webview_window("main") {
+        let _ = window.set_always_on_top(false);
         let _ = window.hide();
         WINDOW_VISIBLE.store(false, Ordering::Relaxed);
     }
@@ -139,8 +140,10 @@ pub fn run() {
                     let _ = window.hide();
                     WINDOW_VISIBLE.store(false, Ordering::Relaxed);
                 }
-                // Perdió foco → marcar como no visible (para que toggle funcione)
+                // Perdió foco → ocultar la ventana (como un popup)
                 tauri::WindowEvent::Focused(false) => {
+                    let _ = window.set_always_on_top(false);
+                    let _ = window.hide();
                     WINDOW_VISIBLE.store(false, Ordering::Relaxed);
                 }
                 // Ganó foco → marcar como visible
