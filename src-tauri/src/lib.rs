@@ -87,6 +87,9 @@ pub fn run() {
             // ── Clipboard monitor ──
             clipboard::start_clipboard_monitor(app.handle().clone(), db_path);
 
+            // ── Mostrar ventana al iniciar ──
+            show_window(app.handle());
+
             // ── System Tray ──
             let show_item = MenuItemBuilder::with_id("show", "Show Pane").build(app)?;
             let hide_item = MenuItemBuilder::with_id("hide", "Hide Pane").build(app)?;
