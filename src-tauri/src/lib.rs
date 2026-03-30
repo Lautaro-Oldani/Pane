@@ -155,6 +155,8 @@ pub fn run() {
             commands::clear_history,
             commands::copy_to_clipboard,
             commands::hide_app_window,
+            commands::get_all_settings,
+            commands::set_setting,
             commands::get_collections,
             commands::create_collection,
             commands::delete_collection,

@@ -4,9 +4,11 @@ import { initDatabase } from "./lib/db";
 import { useClips } from "./hooks/useClips";
 import { useSearch } from "./hooks/useSearch";
 import { useCollections } from "./hooks/useCollections";
+import { useSettings } from "./hooks/useSettings";
 import { Sidebar } from "./components/Sidebar";
 import { SearchBar } from "./components/SearchBar";
 import { ClipList } from "./components/ClipList";
+import { Settings } from "./components/Settings";
 import "./App.css";
 
 function App() {
@@ -54,7 +56,9 @@ function MainView() {
   } = useClips();
 
   const { collections, createCollection, deleteCollection, setClipCollection } = useCollections();
+  const { settings, updateSetting } = useSettings();
   const { query, setQuery, results } = useSearch(clips);
+  const [showSettings, setShowSettings] = useState(false);
 
   // Keyboard navigation
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -135,28 +139,39 @@ function MainView() {
         collectionClipCounts={collectionClipCounts}
         onCreateCollection={createCollection}
         onDeleteCollection={deleteCollection}
+        onOpenSettings={() => setShowSettings(true)}
       />
       <main className="flex-1 flex flex-col min-w-0">
-        <div className="px-4 py-3 border-b border-gray-800 space-y-2">
-          <SearchBar value={query} onChange={setQuery} />
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-gray-200">{headerTitle}</h2>
-            <p className="text-xs text-gray-500">
-              {query ? `${results.length} results` : `${clips.length} clips`}
-            </p>
-          </div>
-        </div>
-        <ClipList
-          clips={results}
-          selectedIndex={selectedIndex}
-          hasMore={!query && hasMore}
-          collections={collections}
-          onLoadMore={loadMore}
-          onDelete={deleteClip}
-          onTogglePin={togglePin}
-          onToggleFavorite={toggleFavorite}
-          onMoveToCollection={handleMoveToCollection}
-        />
+        {showSettings ? (
+          <Settings
+            settings={settings}
+            onUpdate={updateSetting}
+            onClose={() => setShowSettings(false)}
+          />
+        ) : (
+          <>
+            <div className="px-4 py-3 border-b border-gray-800 space-y-2">
+              <SearchBar value={query} onChange={setQuery} />
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm font-semibold text-gray-200">{headerTitle}</h2>
+                <p className="text-xs text-gray-500">
+                  {query ? `${results.length} results` : `${clips.length} clips`}
+                </p>
+              </div>
+            </div>
+            <ClipList
+              clips={results}
+              selectedIndex={selectedIndex}
+              hasMore={!query && hasMore}
+              collections={collections}
+              onLoadMore={loadMore}
+              onDelete={deleteClip}
+              onTogglePin={togglePin}
+              onToggleFavorite={toggleFavorite}
+              onMoveToCollection={handleMoveToCollection}
+            />
+          </>
+        )}
       </main>
     </div>
   );

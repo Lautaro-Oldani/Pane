@@ -10,6 +10,7 @@ interface SidebarProps {
   collectionClipCounts: Record<number, number>;
   onCreateCollection: (name: string) => void;
   onDeleteCollection: (id: number) => void;
+  onOpenSettings: () => void;
 }
 
 const NAV_ITEMS: { key: FilterType; label: string; icon: string }[] = [
@@ -35,6 +36,7 @@ export function Sidebar({
   collectionClipCounts,
   onCreateCollection,
   onDeleteCollection,
+  onOpenSettings,
 }: SidebarProps) {
   const [showNewInput, setShowNewInput] = useState(false);
   const [newName, setNewName] = useState("");
@@ -127,6 +129,16 @@ export function Sidebar({
           </div>
         ))}
       </nav>
+
+      <div className="p-2 border-t border-gray-800">
+        <button
+          onClick={onOpenSettings}
+          className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-sm text-gray-400 hover:text-gray-200 hover:bg-gray-800/50 transition-colors"
+        >
+          <span className="text-base">⚙️</span>
+          <span>Settings</span>
+        </button>
+      </div>
     </aside>
   );
 }

@@ -85,6 +85,18 @@ pub fn copy_to_clipboard(db_path: State<DbPath>, id: i64) -> Result<(), String> 
     }
 }
 
+// ── Settings ─────────────────────────────────────────────────────────
+
+#[tauri::command]
+pub fn get_all_settings(db_path: State<DbPath>) -> Result<Vec<(String, String)>, String> {
+    db::get_all_settings(&db_path.0)
+}
+
+#[tauri::command]
+pub fn set_setting(db_path: State<DbPath>, key: String, value: String) -> Result<(), String> {
+    db::set_setting(&db_path.0, &key, &value)
+}
+
 // ── Colecciones ──────────────────────────────────────────────────────
 
 #[tauri::command]

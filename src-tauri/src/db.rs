@@ -308,6 +308,48 @@ pub fn count_clips_in_collection(path: &PathBuf, collection_id: i64) -> Result<i
     .map_err(|e| format!("Count error: {e}"))
 }
 
+// ── Settings ─────────────────────────────────────────────────────────
+
+/// Obtiene todos los settings como pares key-value.
+pub fn get_all_settings(path: &PathBuf) -> Result<Vec<(String, String)>, String> {
+    let conn = open(path)?;
+    let mut stmt = conn
+        .prepare("SELECT key, value FROM settings")
+        .map_err(|e| format!("Prepare error: {e}"))?;
+    let settings: Vec<(String, String)> = stmt
+        .query_map([], |row| Ok((row.get(0)?, row.get(1)?)))
+        .map_err(|e| format!("Query error: {e}"))?
+        .collect::<Result<Vec<_>, _>>()
+        .map_err(|e| format!("Row error: {e}"))?;
+    Ok(settings)
+}
+
+/// Obtiene un setting por key.
+pub fn get_setting(path: &PathBuf, key: &str) -> Result<Option<String>, String> {
+    let conn = open(path)?;
+    let result = conn.query_row(
+        "SELECT value FROM settings WHERE key = ?1",
+        params![key],
+        |row| row.get(0),
+    );
+    match result {
+        Ok(val) => Ok(Some(val)),
+        Err(rusqlite::Error::QueryReturnedNoRows) => Ok(None),
+        Err(e) => Err(format!("Query error: {e}")),
+    }
+}
+
+/// Guarda un setting (INSERT OR REPLACE).
+pub fn set_setting(path: &PathBuf, key: &str, value: &str) -> Result<(), String> {
+    let conn = open(path)?;
+    conn.execute(
+        "INSERT OR REPLACE INTO settings (key, value) VALUES (?1, ?2)",
+        params![key, value],
+    )
+    .map_err(|e| format!("Insert error: {e}"))?;
+    Ok(())
+}
+
 // ── Clips (continuación) ────────────────────────────────────────────
 
 /// Obtiene un clip por ID. Se usa en copy_to_clipboard para leer el contenido.
