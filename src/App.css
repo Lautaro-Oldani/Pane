@@ -1,1 +1,8 @@
 @import "tailwindcss";
+
+/* Reset para que Tailwind controle todo */
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
