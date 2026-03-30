@@ -33,7 +33,11 @@ export function useClips() {
 
   useEffect(() => {
     const unlisten = listen<Clip>("new-clip", (event) => {
-      setClips((prev) => [event.payload, ...prev]);
+      setClips((prev) => {
+        // Quitar duplicado si ya existe (mismo id = clip movido al tope)
+        const without = prev.filter((c) => c.id !== event.payload.id);
+        return [event.payload, ...without];
+      });
       offsetRef.current += 1;
     });
     return () => { unlisten.then((fn) => fn()); };
