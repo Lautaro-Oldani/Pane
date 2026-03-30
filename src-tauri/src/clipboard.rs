@@ -85,8 +85,23 @@ impl ClipboardHandler for Handler {
 }
 
 impl Handler {
+    /// Límite de contenido: 50KB. Textos más largos se truncan.
+    const MAX_CONTENT_BYTES: usize = 50 * 1024;
+
     /// Procesa un texto copiado al clipboard.
     fn handle_text(&mut self, text: &str) {
+        // Truncar textos muy largos (ej: copiar un archivo entero)
+        let text = if text.len() > Self::MAX_CONTENT_BYTES {
+            // Buscar un punto de corte seguro en UTF-8
+            let mut end = Self::MAX_CONTENT_BYTES;
+            while end > 0 && !text.is_char_boundary(end) {
+                end -= 1;
+            }
+            &text[..end]
+        } else {
+            text
+        };
+
         let hash = calculate_hash(text);
 
         // Si es el mismo contenido que el último, ignorar

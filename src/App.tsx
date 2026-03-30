@@ -53,6 +53,7 @@ function MainView() {
     deleteClip,
     togglePin,
     toggleFavorite,
+    clearHistory,
     updateClipCollection,
   } = useClips();
 
@@ -156,9 +157,20 @@ function MainView() {
               <SearchBar value={query} onChange={setQuery} />
               <div className="flex items-center justify-between">
                 <h2 className="text-sm font-semibold text-gray-200">{headerTitle}</h2>
-                <p className="text-xs text-gray-500">
-                  {query ? `${results.length} results` : `${clips.length} clips`}
-                </p>
+                <div className="flex items-center gap-2">
+                  <p className="text-xs text-gray-500">
+                    {query ? `${results.length} results` : `${clips.length} clips`}
+                  </p>
+                  {filter === "all" && !query && clips.length > 0 && (
+                    <button
+                      onClick={() => { if (confirm("Clear all unprotected clips?")) clearHistory(); }}
+                      className="text-xs text-gray-500 hover:text-red-400 transition-colors"
+                      title="Keeps pinned, favorites, and collections"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
             <ClipList

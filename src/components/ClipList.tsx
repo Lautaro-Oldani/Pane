@@ -52,10 +52,20 @@ export function ClipList({
   if (clips.length === 0) {
     return (
       <div className="flex-1 flex items-center justify-center text-gray-500">
-        <div className="text-center">
-          <p className="text-3xl mb-2">📋</p>
-          <p className="text-sm">No clips yet</p>
-          <p className="text-xs mt-1">Copy something to get started</p>
+        <div className="text-center space-y-2">
+          <p className="text-4xl">📋</p>
+          <p className="text-sm font-medium">No clips yet</p>
+          <p className="text-xs">Copy something anywhere to see it here</p>
+          <div className="mt-4 pt-4 border-t border-gray-800">
+            <p className="text-xs">
+              <kbd className="px-1.5 py-0.5 bg-gray-800 rounded text-gray-400 text-[11px]">Ctrl+Shift+V</kbd>
+              <span className="ml-1.5">to open Pane from anywhere</span>
+            </p>
+            <p className="text-xs mt-1">
+              <kbd className="px-1.5 py-0.5 bg-gray-800 rounded text-gray-400 text-[11px]">Esc</kbd>
+              <span className="ml-1.5">to dismiss</span>
+            </p>
+          </div>
         </div>
       </div>
     );

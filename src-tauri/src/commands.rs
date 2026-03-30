@@ -7,6 +7,7 @@
 
 use arboard::Clipboard;
 use tauri::State;
+use tauri_plugin_autostart::ManagerExt as AutostartManagerExt;
 
 use crate::clipboard::set_skip_next;
 use crate::db::{self, Clip, Collection, DbPath};
@@ -93,8 +94,20 @@ pub fn get_all_settings(db_path: State<DbPath>) -> Result<Vec<(String, String)>,
 }
 
 #[tauri::command]
-pub fn set_setting(db_path: State<DbPath>, key: String, value: String) -> Result<(), String> {
-    db::set_setting(&db_path.0, &key, &value)
+pub fn set_setting(app: tauri::AppHandle, db_path: State<DbPath>, key: String, value: String) -> Result<(), String> {
+    db::set_setting(&db_path.0, &key, &value)?;
+
+    // Si cambiaron autostart, aplicar de verdad
+    if key == "autostart" {
+        let autostart = app.autolaunch();
+        if value == "true" {
+            let _ = autostart.enable();
+        } else {
+            let _ = autostart.disable();
+        }
+    }
+
+    Ok(())
 }
 
 // ── Colecciones ──────────────────────────────────────────────────────

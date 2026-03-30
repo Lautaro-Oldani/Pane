@@ -75,7 +75,8 @@ pub fn run_migrations(path: &PathBuf) -> Result<(), String> {
 }
 
 /// Inserta un nuevo clip en la base de datos.
-/// Retorna el Clip completo (con id y created_at generados por SQLite).
+/// Si ya existe un clip con el mismo hash, lo mueve al tope (actualiza created_at)
+/// en vez de crear un duplicado. Retorna el Clip completo.
 pub fn insert_clip(
     path: &PathBuf,
     content: &str,
@@ -86,19 +87,34 @@ pub fn insert_clip(
 ) -> Result<Clip, String> {
     let conn = open(path)?;
 
-    // INSERT con los valores que tenemos. created_at se genera automáticamente
-    // por el DEFAULT de la tabla.
-    conn.execute(
-        "INSERT INTO clips (content, content_type, preview, hash, image_base64) \
-         VALUES (?1, ?2, ?3, ?4, ?5)",
-        params![content, content_type, preview, hash, image_base64],
-    )
-    .map_err(|e| format!("Insert error: {e}"))?;
+    // Buscar si ya existe un clip con este hash (duplicado de una sesión anterior)
+    let existing_id: Option<i64> = conn
+        .query_row(
+            "SELECT id FROM clips WHERE hash = ?1",
+            params![hash],
+            |row| row.get(0),
+        )
+        .ok();
 
-    // last_insert_rowid() nos da el id del clip recién insertado
-    let id = conn.last_insert_rowid();
+    let id = if let Some(eid) = existing_id {
+        // Ya existe: actualizar created_at para moverlo al tope de la lista
+        conn.execute(
+            "UPDATE clips SET created_at = datetime('now', 'localtime') WHERE id = ?1",
+            params![eid],
+        )
+        .map_err(|e| format!("Update error: {e}"))?;
+        eid
+    } else {
+        // No existe: insertar nuevo
+        conn.execute(
+            "INSERT INTO clips (content, content_type, preview, hash, image_base64) \
+             VALUES (?1, ?2, ?3, ?4, ?5)",
+            params![content, content_type, preview, hash, image_base64],
+        )
+        .map_err(|e| format!("Insert error: {e}"))?;
+        conn.last_insert_rowid()
+    };
 
-    // Leemos el clip completo para obtener el created_at generado por SQLite
     conn.query_row(
         &format!("SELECT {SELECT_COLS} FROM clips WHERE id = ?1"),
         params![id],

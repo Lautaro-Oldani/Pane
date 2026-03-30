@@ -56,6 +56,10 @@ pub fn run() {
     tauri::Builder::default()
         // ── Plugins ──────────────────────────────────────────
         .plugin(tauri_plugin_clipboard_manager::init())
+        // Si ya hay una instancia corriendo, mostrar su ventana y cerrar esta.
+        .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
+            show_window(app);
+        }))
         .plugin(tauri_plugin_autostart::Builder::new().build())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(
