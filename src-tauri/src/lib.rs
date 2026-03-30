@@ -74,6 +74,10 @@ pub fn run() {
             db::run_migrations(&db_path)?;
             app.manage(DbPath(db_path.clone()));
 
+            // ── Limpieza inicial ──
+            // Borrar clips viejos y excedentes al arrancar
+            db::run_cleanup(&db_path)?;
+
             // ── Clipboard monitor ──
             clipboard::start_clipboard_monitor(app.handle().clone(), db_path);
 

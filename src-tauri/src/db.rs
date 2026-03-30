@@ -350,6 +350,80 @@ pub fn set_setting(path: &PathBuf, key: &str, value: &str) -> Result<(), String>
     Ok(())
 }
 
+// ── Limpieza automática ──────────────────────────────────────────────
+
+/// Borra clips que exceden el límite de historial.
+/// Respeta pinned y favorites (no los borra).
+/// Borra los más viejos primero.
+pub fn enforce_history_limit(path: &PathBuf, limit: i64) -> Result<u64, String> {
+    let conn = open(path)?;
+    // Contar clips no-protegidos
+    let count: i64 = conn
+        .query_row(
+            "SELECT COUNT(*) FROM clips WHERE is_pinned = 0 AND is_favorite = 0",
+            [],
+            |r| r.get(0),
+        )
+        .map_err(|e| format!("Count error: {e}"))?;
+
+    if count <= limit {
+        return Ok(0);
+    }
+
+    let to_delete = count - limit;
+    let deleted = conn
+        .execute(
+            "DELETE FROM clips WHERE id IN (
+                SELECT id FROM clips
+                WHERE is_pinned = 0 AND is_favorite = 0
+                ORDER BY created_at ASC
+                LIMIT ?1
+            )",
+            params![to_delete],
+        )
+        .map_err(|e| format!("Delete error: {e}"))?;
+
+    Ok(deleted as u64)
+}
+
+/// Borra clips más viejos que X días.
+/// Respeta pinned y favorites.
+pub fn clear_old_clips(path: &PathBuf, days: i64) -> Result<u64, String> {
+    if days <= 0 {
+        return Ok(0);
+    }
+    let conn = open(path)?;
+    let deleted = conn
+        .execute(
+            "DELETE FROM clips WHERE is_pinned = 0 AND is_favorite = 0
+             AND created_at < datetime('now', 'localtime', ?1)",
+            params![format!("-{days} days")],
+        )
+        .map_err(|e| format!("Delete error: {e}"))?;
+
+    Ok(deleted as u64)
+}
+
+/// Ejecuta ambas limpiezas usando los valores de la tabla settings.
+pub fn run_cleanup(path: &PathBuf) -> Result<(), String> {
+    // Leer settings
+    let limit_str = get_setting(path, "history_limit")?.unwrap_or_else(|| "500".to_string());
+    let days_str = get_setting(path, "auto_clear_days")?.unwrap_or_else(|| "30".to_string());
+
+    let limit: i64 = limit_str.parse().unwrap_or(500);
+    let days: i64 = days_str.parse().unwrap_or(30);
+
+    // Primero borrar por antigüedad, después por límite
+    let old = clear_old_clips(path, days)?;
+    let over = enforce_history_limit(path, limit)?;
+
+    if old > 0 || over > 0 {
+        eprintln!("Cleanup: removed {old} old + {over} over limit");
+    }
+
+    Ok(())
+}
+
 // ── Clips (continuación) ────────────────────────────────────────────
 
 /// Obtiene un clip por ID. Se usa en copy_to_clipboard para leer el contenido.

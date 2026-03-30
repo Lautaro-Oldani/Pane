@@ -104,6 +104,8 @@ impl Handler {
         match db::insert_clip(&self.db_path, text, content_type, &preview, &hash, None) {
             Ok(clip) => {
                 let _ = self.app.emit("new-clip", &clip);
+                // Ejecutar limpieza después de cada nuevo clip
+                let _ = db::run_cleanup(&self.db_path);
             }
             Err(e) => eprintln!("Error saving clip: {e}"),
         }
@@ -144,6 +146,7 @@ impl Handler {
         ) {
             Ok(clip) => {
                 let _ = self.app.emit("new-clip", &clip);
+                let _ = db::run_cleanup(&self.db_path);
             }
             Err(e) => eprintln!("Error saving image clip: {e}"),
         }
