@@ -15,12 +15,13 @@ const TYPE_BADGE: Record<string, { label: string; color: string }> = {
 
 interface ClipItemProps {
   clip: Clip;
+  selected?: boolean;
   onDelete: (id: number) => void;
   onTogglePin: (id: number) => void;
   onToggleFavorite: (id: number) => void;
 }
 
-export function ClipItem({ clip, onDelete, onTogglePin, onToggleFavorite }: ClipItemProps) {
+export function ClipItem({ clip, selected, onDelete, onTogglePin, onToggleFavorite }: ClipItemProps) {
   const [copied, setCopied] = useState(false);
   const [showActions, setShowActions] = useState(false);
   const badge = TYPE_BADGE[clip.content_type] || TYPE_BADGE.text;
@@ -37,13 +38,16 @@ export function ClipItem({ clip, onDelete, onTogglePin, onToggleFavorite }: Clip
 
   return (
     <div
+      data-clip-item
       onClick={handleCopy}
       onMouseEnter={() => setShowActions(true)}
       onMouseLeave={() => setShowActions(false)}
       className={`group relative rounded-lg p-3 border cursor-pointer transition-all ${
         copied
           ? "border-green-500/50 bg-green-500/5"
-          : "border-gray-800 bg-gray-900 hover:border-gray-600 hover:bg-gray-800/50"
+          : selected
+            ? "border-blue-500/50 bg-blue-500/10"
+            : "border-gray-800 bg-gray-900 hover:border-gray-600 hover:bg-gray-800/50"
       }`}
     >
       {/* Header: badge + timestamp */}

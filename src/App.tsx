@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { invoke } from "@tauri-apps/api/core";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { initDatabase } from "./lib/db";
 import { useClips } from "./hooks/useClips";
 import { useSearch } from "./hooks/useSearch";
@@ -52,6 +54,47 @@ function MainView() {
   // Búsqueda fuzzy sobre los clips ya filtrados
   const { query, setQuery, results } = useSearch(clips);
 
+  // Keyboard navigation
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+
+  // Reset selection cuando cambian los resultados
+  useEffect(() => {
+    setSelectedIndex(-1);
+  }, [query, filter]);
+
+  const handleKeyDown = useCallback(
+    async (e: KeyboardEvent) => {
+      switch (e.key) {
+        case "ArrowDown":
+          e.preventDefault();
+          setSelectedIndex((prev) => Math.min(prev + 1, results.length - 1));
+          break;
+        case "ArrowUp":
+          e.preventDefault();
+          setSelectedIndex((prev) => Math.max(prev - 1, -1));
+          break;
+        case "Enter":
+          e.preventDefault();
+          if (selectedIndex >= 0 && selectedIndex < results.length) {
+            const clip = results[selectedIndex];
+            await invoke("copy_to_clipboard", { id: clip.id });
+            getCurrentWindow().hide();
+          }
+          break;
+        case "Escape":
+          e.preventDefault();
+          getCurrentWindow().hide();
+          break;
+      }
+    },
+    [results, selectedIndex]
+  );
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyDown]);
+
   const clipCounts: Record<string, number> = {
     all: allClips.length,
     pinned: allClips.filter((c) => c.is_pinned).length,
@@ -86,6 +129,7 @@ function MainView() {
         {/* Clip list — muestra resultados de búsqueda si hay query */}
         <ClipList
           clips={results}
+          selectedIndex={selectedIndex}
           hasMore={!query && hasMore}
           onLoadMore={loadMore}
           onDelete={deleteClip}

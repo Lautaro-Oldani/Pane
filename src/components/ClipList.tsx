@@ -4,6 +4,7 @@ import { ClipItem } from "./ClipItem";
 
 interface ClipListProps {
   clips: Clip[];
+  selectedIndex: number;
   hasMore: boolean;
   onLoadMore: () => void;
   onDelete: (id: number) => void;
@@ -13,6 +14,7 @@ interface ClipListProps {
 
 export function ClipList({
   clips,
+  selectedIndex,
   hasMore,
   onLoadMore,
   onDelete,
@@ -20,25 +22,28 @@ export function ClipList({
   onToggleFavorite,
 }: ClipListProps) {
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
-  // Intersection Observer para scroll infinito:
-  // cuando el "sentinel" (div invisible al final) entra en el viewport,
-  // cargamos más clips automáticamente.
+  // Intersection Observer para scroll infinito
   useEffect(() => {
     if (!sentinelRef.current || !hasMore) return;
-
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) {
-          onLoadMore();
-        }
+        if (entries[0].isIntersecting) onLoadMore();
       },
       { threshold: 0.1 }
     );
-
     observer.observe(sentinelRef.current);
     return () => observer.disconnect();
   }, [hasMore, onLoadMore]);
+
+  // Auto-scroll para mantener el item seleccionado visible
+  useEffect(() => {
+    if (selectedIndex < 0 || !listRef.current) return;
+    const items = listRef.current.querySelectorAll("[data-clip-item]");
+    const selected = items[selectedIndex] as HTMLElement | undefined;
+    selected?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }, [selectedIndex]);
 
   if (clips.length === 0) {
     return (
@@ -53,18 +58,17 @@ export function ClipList({
   }
 
   return (
-    <div className="flex-1 overflow-y-auto p-3 space-y-2">
-      {clips.map((clip) => (
+    <div ref={listRef} className="flex-1 overflow-y-auto p-3 space-y-2">
+      {clips.map((clip, index) => (
         <ClipItem
           key={clip.id}
           clip={clip}
+          selected={index === selectedIndex}
           onDelete={onDelete}
           onTogglePin={onTogglePin}
           onToggleFavorite={onToggleFavorite}
         />
       ))}
-
-      {/* Sentinel para scroll infinito */}
       {hasMore && (
         <div ref={sentinelRef} className="h-8 flex items-center justify-center">
           <span className="text-xs text-gray-600">Loading more...</span>
