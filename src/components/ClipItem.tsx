@@ -50,7 +50,7 @@ export function ClipItem({ clip, selected, collections, onDelete, onTogglePin, o
           ? "border-green-500/50 bg-green-500/5"
           : selected
             ? "border-blue-500/50 bg-blue-500/10"
-            : "border-gray-800 bg-gray-900 hover:border-gray-600 hover:bg-gray-800/50"
+            : "theme-border theme-bg-card hover:opacity-80"
       }`}
     >
       {/* Header: badge + timestamp */}

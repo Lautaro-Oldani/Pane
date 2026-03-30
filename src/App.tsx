@@ -5,6 +5,7 @@ import { useClips } from "./hooks/useClips";
 import { useSearch } from "./hooks/useSearch";
 import { useCollections } from "./hooks/useCollections";
 import { useSettings } from "./hooks/useSettings";
+import { useTheme } from "./hooks/useTheme";
 import { Sidebar } from "./components/Sidebar";
 import { SearchBar } from "./components/SearchBar";
 import { ClipList } from "./components/ClipList";
@@ -57,6 +58,7 @@ function MainView() {
 
   const { collections, createCollection, deleteCollection, setClipCollection } = useCollections();
   const { settings, updateSetting } = useSettings();
+  const theme = useTheme(settings.theme);
   const { query, setQuery, results } = useSearch(clips);
   const [showSettings, setShowSettings] = useState(false);
 
@@ -129,7 +131,7 @@ function MainView() {
     : filter === "all" ? "All Clips" : filter.charAt(0).toUpperCase() + filter.slice(1);
 
   return (
-    <div className="h-screen flex bg-gray-950 text-white overflow-hidden">
+    <div className={`h-screen flex overflow-hidden theme-bg theme-text ${theme}`}>
       <Sidebar
         filter={filter}
         selectedCollectionId={selectedCollectionId}
@@ -150,7 +152,7 @@ function MainView() {
           />
         ) : (
           <>
-            <div className="px-4 py-3 border-b border-gray-800 space-y-2">
+            <div className="px-4 py-3 border-b theme-border space-y-2">
               <SearchBar value={query} onChange={setQuery} />
               <div className="flex items-center justify-between">
                 <h2 className="text-sm font-semibold text-gray-200">{headerTitle}</h2>

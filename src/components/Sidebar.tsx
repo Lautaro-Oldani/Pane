@@ -50,9 +50,9 @@ export function Sidebar({
   }
 
   return (
-    <aside className="w-48 bg-gray-950 border-r border-gray-800 flex flex-col h-full">
-      <div className="p-3 border-b border-gray-800">
-        <h1 className="text-lg font-bold text-white tracking-tight">Pane</h1>
+    <aside className="w-48 theme-bg-secondary border-r theme-border flex flex-col h-full">
+      <div className="p-3 border-b theme-border">
+        <h1 className="text-lg font-bold theme-text tracking-tight">Pane</h1>
       </div>
 
       <nav className="flex-1 overflow-y-auto p-2 space-y-1">
@@ -67,7 +67,7 @@ export function Sidebar({
           />
         ))}
 
-        <div className="border-t border-gray-800 my-2" />
+        <div className="border-t theme-border my-2" />
         <p className="text-xs text-gray-500 px-2 py-1 uppercase tracking-wider">Types</p>
         {TYPE_ITEMS.map((item) => (
           <NavButton
@@ -81,7 +81,7 @@ export function Sidebar({
         ))}
 
         {/* Collections */}
-        <div className="border-t border-gray-800 my-2" />
+        <div className="border-t theme-border my-2" />
         <div className="flex items-center justify-between px-2 py-1">
           <p className="text-xs text-gray-500 uppercase tracking-wider">Collections</p>
           <button
@@ -130,7 +130,7 @@ export function Sidebar({
         ))}
       </nav>
 
-      <div className="p-2 border-t border-gray-800">
+      <div className="p-2 border-t theme-border">
         <button
           onClick={onOpenSettings}
           className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-sm text-gray-400 hover:text-gray-200 hover:bg-gray-800/50 transition-colors"

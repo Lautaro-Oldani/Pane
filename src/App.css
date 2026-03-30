@@ -1,8 +1,42 @@
 @import "tailwindcss";
 
-/* Reset para que Tailwind controle todo */
 body {
   margin: 0;
   padding: 0;
   overflow: hidden;
 }
+
+/* Dark theme (default) */
+.dark {
+  --bg-primary: #030712;
+  --bg-secondary: #0a0f1a;
+  --bg-card: #111827;
+  --bg-hover: #1f2937;
+  --border: #1f2937;
+  --border-hover: #4b5563;
+  --text-primary: #f9fafb;
+  --text-secondary: #d1d5db;
+  --text-muted: #6b7280;
+}
+
+/* Light theme */
+.light {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --bg-card: #ffffff;
+  --bg-hover: #f3f4f6;
+  --border: #e5e7eb;
+  --border-hover: #9ca3af;
+  --text-primary: #111827;
+  --text-secondary: #374151;
+  --text-muted: #9ca3af;
+}
+
+/* Apply theme variables */
+.theme-bg { background-color: var(--bg-primary); }
+.theme-bg-secondary { background-color: var(--bg-secondary); }
+.theme-bg-card { background-color: var(--bg-card); }
+.theme-text { color: var(--text-primary); }
+.theme-text-secondary { color: var(--text-secondary); }
+.theme-text-muted { color: var(--text-muted); }
+.theme-border { border-color: var(--border); }
