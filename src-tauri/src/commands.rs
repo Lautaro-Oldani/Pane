@@ -11,6 +11,14 @@ use tauri::State;
 use crate::clipboard::set_skip_next;
 use crate::db::{self, Clip, DbPath};
 
+/// Oculta la ventana y actualiza el flag de visibilidad.
+/// El frontend llama esto en vez de window.hide() directamente
+/// para mantener sincronizado el flag WINDOW_VISIBLE.
+#[tauri::command]
+pub fn hide_app_window(app: tauri::AppHandle) {
+    crate::hide_window(&app);
+}
+
 /// Obtiene clips paginados.
 /// Frontend: invoke("get_clips", { limit: 50, offset: 0 })
 #[tauri::command]

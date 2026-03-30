@@ -65,19 +65,8 @@ export function ClipItem({ clip, selected, onDelete, onTogglePin, onToggleFavori
         </div>
       </div>
 
-      {/* Content */}
-      {clip.content_type === "image" && clip.image_base64 ? (
-        <img
-          src={`data:image/png;base64,${clip.image_base64}`}
-          alt={clip.preview || "Image"}
-          className="max-h-32 rounded border border-gray-700"
-          loading="lazy"
-        />
-      ) : (
-        <p className="text-sm text-gray-300 font-mono whitespace-pre-wrap break-all line-clamp-4 leading-relaxed">
-          {clip.preview || clip.content}
-        </p>
-      )}
+      {/* Content — varía según el tipo */}
+      <ClipContent clip={clip} />
 
       {/* Action buttons (visible on hover) */}
       {showActions && (
@@ -100,6 +89,66 @@ export function ClipItem({ clip, selected, onDelete, onTogglePin, onToggleFavori
         </div>
       )}
     </div>
+  );
+}
+
+/** Renderiza el contenido del clip según su tipo */
+function ClipContent({ clip }: { clip: Clip }) {
+  // Imagen: mostrar thumbnail
+  if (clip.content_type === "image" && clip.image_base64) {
+    return (
+      <img
+        src={`data:image/png;base64,${clip.image_base64}`}
+        alt={clip.preview || "Image"}
+        className="max-h-32 rounded border border-gray-700"
+        loading="lazy"
+      />
+    );
+  }
+
+  // Color: cuadradito de preview + el valor
+  if (clip.content_type === "color") {
+    return (
+      <div className="flex items-center gap-2">
+        <div
+          className="w-8 h-8 rounded border border-gray-600 shrink-0"
+          style={{ backgroundColor: clip.content.trim() }}
+        />
+        <span className="text-sm text-gray-300 font-mono">{clip.content.trim()}</span>
+      </div>
+    );
+  }
+
+  // URL: mostrar el dominio destacado
+  if (clip.content_type === "url") {
+    let domain = clip.content.trim();
+    try {
+      domain = new URL(
+        domain.startsWith("www.") ? `https://${domain}` : domain
+      ).hostname;
+    } catch { /* usar el texto original */ }
+    return (
+      <div>
+        <p className="text-sm text-blue-400 font-mono truncate">{clip.content.trim()}</p>
+        <p className="text-xs text-gray-500 mt-0.5">{domain}</p>
+      </div>
+    );
+  }
+
+  // Code: font mono con fondo ligeramente diferente
+  if (clip.content_type === "code") {
+    return (
+      <pre className="text-sm text-green-300 font-mono whitespace-pre-wrap break-all line-clamp-4 leading-relaxed bg-gray-950/50 rounded p-1.5 -mx-0.5">
+        {clip.preview || clip.content}
+      </pre>
+    );
+  }
+
+  // Text / HTML / default
+  return (
+    <p className="text-sm text-gray-300 font-mono whitespace-pre-wrap break-all line-clamp-4 leading-relaxed">
+      {clip.preview || clip.content}
+    </p>
   );
 }
 

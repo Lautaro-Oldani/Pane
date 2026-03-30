@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { getCurrentWindow } from "@tauri-apps/api/window";
 import { initDatabase } from "./lib/db";
 import { useClips } from "./hooks/useClips";
 import { useSearch } from "./hooks/useSearch";
@@ -78,12 +77,12 @@ function MainView() {
           if (selectedIndex >= 0 && selectedIndex < results.length) {
             const clip = results[selectedIndex];
             await invoke("copy_to_clipboard", { id: clip.id });
-            getCurrentWindow().hide();
+            invoke("hide_app_window");
           }
           break;
         case "Escape":
           e.preventDefault();
-          getCurrentWindow().hide();
+          invoke("hide_app_window");
           break;
       }
     },

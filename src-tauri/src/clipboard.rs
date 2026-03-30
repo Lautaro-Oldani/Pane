@@ -13,6 +13,7 @@ use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
 use tauri::{AppHandle, Emitter};
 
+use crate::categories;
 use crate::db;
 
 // ── Flag global para ignorar cambios propios ─────────────────────────
@@ -94,10 +95,13 @@ impl Handler {
         }
         self.last_hash = hash.clone();
 
+        // Detectar tipo de contenido automáticamente
+        let content_type = categories::detect_content_type(text);
+
         // Preview: primeros 200 caracteres
         let preview = truncate_preview(text, 200);
 
-        match db::insert_clip(&self.db_path, text, "text", &preview, &hash, None) {
+        match db::insert_clip(&self.db_path, text, content_type, &preview, &hash, None) {
             Ok(clip) => {
                 let _ = self.app.emit("new-clip", &clip);
             }
