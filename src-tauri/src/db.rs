@@ -204,7 +204,7 @@ pub fn clear_history(path: &PathBuf) -> Result<u64, String> {
     let conn = open(path)?;
     let deleted = conn
         .execute(
-            "DELETE FROM clips WHERE is_pinned = 0 AND is_favorite = 0",
+            "DELETE FROM clips WHERE is_pinned = 0 AND is_favorite = 0 AND collection_id IS NULL",
             [],
         )
         .map_err(|e| format!("Delete error: {e}"))?;
@@ -357,10 +357,10 @@ pub fn set_setting(path: &PathBuf, key: &str, value: &str) -> Result<(), String>
 /// Borra los más viejos primero.
 pub fn enforce_history_limit(path: &PathBuf, limit: i64) -> Result<u64, String> {
     let conn = open(path)?;
-    // Contar clips no-protegidos
+    // Contar clips no-protegidos (no pinned, no favorito, no en colección)
     let count: i64 = conn
         .query_row(
-            "SELECT COUNT(*) FROM clips WHERE is_pinned = 0 AND is_favorite = 0",
+            "SELECT COUNT(*) FROM clips WHERE is_pinned = 0 AND is_favorite = 0 AND collection_id IS NULL",
             [],
             |r| r.get(0),
         )
@@ -375,7 +375,7 @@ pub fn enforce_history_limit(path: &PathBuf, limit: i64) -> Result<u64, String> 
         .execute(
             "DELETE FROM clips WHERE id IN (
                 SELECT id FROM clips
-                WHERE is_pinned = 0 AND is_favorite = 0
+                WHERE is_pinned = 0 AND is_favorite = 0 AND collection_id IS NULL
                 ORDER BY created_at ASC
                 LIMIT ?1
             )",
@@ -395,7 +395,7 @@ pub fn clear_old_clips(path: &PathBuf, days: i64) -> Result<u64, String> {
     let conn = open(path)?;
     let deleted = conn
         .execute(
-            "DELETE FROM clips WHERE is_pinned = 0 AND is_favorite = 0
+            "DELETE FROM clips WHERE is_pinned = 0 AND is_favorite = 0 AND collection_id IS NULL
              AND created_at < datetime('now', 'localtime', ?1)",
             params![format!("-{days} days")],
         )
