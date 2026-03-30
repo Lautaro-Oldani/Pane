@@ -34,7 +34,9 @@
     "targets": ["nsis"],
     "windows": {
       "nsis": {
-        "installMode": "currentUser"
+        "installMode": "currentUser",
+        "installerIcon": "icons/icon.ico",
+        "displayLanguageSelector": false
       }
     },
     "icon": [
@@ -43,6 +45,8 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "shortDescription": "A modern clipboard manager for Windows",
+    "longDescription": "Pane keeps track of everything you copy — text, images, code, links, colors. Search instantly, organize into collections, and paste with a single shortcut."
   }
 }

@@ -1,0 +1,19 @@
+Welcome to Pane!
+
+A modern clipboard manager that lives in your system tray.
+
+WHAT IT DOES:
+- Automatically saves everything you copy (text, images, code, links, colors)
+- Categorizes your clips automatically
+- Search instantly across your clipboard history
+- Organize clips into collections
+
+HOW TO USE:
+- Press Ctrl+Shift+V anytime to open Pane
+- Click any clip to copy it again
+- Press Escape to dismiss
+- Pane runs quietly in your system tray
+
+Pane is free software. If you find it useful, consider supporting development at ko-fi.com/juanylato
+
+By installing, you agree that Pane stores your clipboard data locally on your computer. No data is sent to any server. Your clipboard history is 100% private.
