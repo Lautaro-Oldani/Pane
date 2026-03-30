@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { initDatabase } from "./lib/db";
 import { useClips } from "./hooks/useClips";
+import { useSearch } from "./hooks/useSearch";
 import { Sidebar } from "./components/Sidebar";
+import { SearchBar } from "./components/SearchBar";
 import { ClipList } from "./components/ClipList";
 import "./App.css";
 
@@ -47,7 +49,9 @@ function MainView() {
     toggleFavorite,
   } = useClips();
 
-  // Contar clips por categoría para el sidebar
+  // Búsqueda fuzzy sobre los clips ya filtrados
+  const { query, setQuery, results } = useSearch(clips);
+
   const clipCounts: Record<string, number> = {
     all: allClips.length,
     pinned: allClips.filter((c) => c.is_pinned).length,
@@ -67,19 +71,22 @@ function MainView() {
         clipCounts={clipCounts}
       />
       <main className="flex-1 flex flex-col min-w-0">
-        {/* Header */}
-        <div className="px-4 py-3 border-b border-gray-800 flex items-center justify-between">
-          <div>
+        {/* Header con search */}
+        <div className="px-4 py-3 border-b border-gray-800 space-y-2">
+          <SearchBar value={query} onChange={setQuery} />
+          <div className="flex items-center justify-between">
             <h2 className="text-sm font-semibold text-gray-200">
               {filter === "all" ? "All Clips" : filter.charAt(0).toUpperCase() + filter.slice(1)}
             </h2>
-            <p className="text-xs text-gray-500">{clips.length} clips</p>
+            <p className="text-xs text-gray-500">
+              {query ? `${results.length} results` : `${clips.length} clips`}
+            </p>
           </div>
         </div>
-        {/* Clip list */}
+        {/* Clip list — muestra resultados de búsqueda si hay query */}
         <ClipList
-          clips={clips}
-          hasMore={hasMore}
+          clips={results}
+          hasMore={!query && hasMore}
           onLoadMore={loadMore}
           onDelete={deleteClip}
           onTogglePin={togglePin}
