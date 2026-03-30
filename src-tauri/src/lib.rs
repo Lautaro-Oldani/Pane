@@ -15,9 +15,10 @@ use tauri_plugin_global_shortcut::{GlobalShortcutExt, Shortcut};
 use tauri_plugin_sql::{Migration, MigrationKind};
 
 /// Flag global para trackear si la ventana está visible.
-/// No confiamos en window.is_visible() porque devuelve valores incorrectos
-/// después de prevent_close() + hide().
 static WINDOW_VISIBLE: AtomicBool = AtomicBool::new(false);
+
+/// Flag para cancelar un hide pendiente (evita cerrar durante resize).
+static CANCEL_HIDE: AtomicBool = AtomicBool::new(false);
 
 fn get_migrations() -> Vec<Migration> {
     vec![Migration {
@@ -140,14 +141,21 @@ pub fn run() {
                     let _ = window.hide();
                     WINDOW_VISIBLE.store(false, Ordering::Relaxed);
                 }
-                // Perdió foco → ocultar la ventana (como un popup)
+                // Perdió foco → ocultar con delay (evita cerrar durante resize)
                 tauri::WindowEvent::Focused(false) => {
-                    let _ = window.set_always_on_top(false);
-                    let _ = window.hide();
-                    WINDOW_VISIBLE.store(false, Ordering::Relaxed);
+                    CANCEL_HIDE.store(false, Ordering::Relaxed);
+                    let app_handle = window.app_handle().clone();
+                    std::thread::spawn(move || {
+                        // Esperar 150ms — si recupera foco, se cancela
+                        std::thread::sleep(std::time::Duration::from_millis(150));
+                        if !CANCEL_HIDE.load(Ordering::Relaxed) {
+                            hide_window(&app_handle);
+                        }
+                    });
                 }
-                // Ganó foco → marcar como visible
+                // Ganó foco → cancelar hide pendiente
                 tauri::WindowEvent::Focused(true) => {
+                    CANCEL_HIDE.store(true, Ordering::Relaxed);
                     WINDOW_VISIBLE.store(true, Ordering::Relaxed);
                 }
                 _ => {}
