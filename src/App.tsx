@@ -10,6 +10,7 @@ import { Sidebar } from "./components/Sidebar";
 import { SearchBar } from "./components/SearchBar";
 import { ClipList } from "./components/ClipList";
 import { Settings } from "./components/Settings";
+import { SupportCard } from "./components/SupportCard";
 import "./App.css";
 
 function App() {
@@ -62,6 +63,7 @@ function MainView() {
   const theme = useTheme(settings.theme);
   const { query, setQuery, results } = useSearch(clips);
   const [showSettings, setShowSettings] = useState(false);
+  const [showSupport, setShowSupport] = useState(false);
 
   // Keyboard navigation
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -142,7 +144,8 @@ function MainView() {
         collectionClipCounts={collectionClipCounts}
         onCreateCollection={createCollection}
         onDeleteCollection={deleteCollection}
-        onOpenSettings={() => setShowSettings(true)}
+        onOpenSettings={() => { setShowSettings(true); setShowSupport(false); }}
+        onOpenSupport={() => { setShowSupport(true); setShowSettings(false); }}
       />
       <main className="flex-1 flex flex-col min-w-0">
         {showSettings ? (
@@ -151,6 +154,8 @@ function MainView() {
             onUpdate={updateSetting}
             onClose={() => setShowSettings(false)}
           />
+        ) : showSupport ? (
+          <SupportCard onClose={() => setShowSupport(false)} />
         ) : (
           <>
             <div className="px-4 py-3 border-b theme-border space-y-2">

@@ -11,6 +11,7 @@ interface SidebarProps {
   onCreateCollection: (name: string) => void;
   onDeleteCollection: (id: number) => void;
   onOpenSettings: () => void;
+  onOpenSupport: () => void;
 }
 
 const NAV_ITEMS: { key: FilterType; label: string; icon: string }[] = [
@@ -37,6 +38,7 @@ export function Sidebar({
   onCreateCollection,
   onDeleteCollection,
   onOpenSettings,
+  onOpenSupport,
 }: SidebarProps) {
   const [showNewInput, setShowNewInput] = useState(false);
   const [newName, setNewName] = useState("");
@@ -130,7 +132,14 @@ export function Sidebar({
         ))}
       </nav>
 
-      <div className="p-2 border-t theme-border">
+      <div className="p-2 border-t theme-border space-y-1">
+        <button
+          onClick={onOpenSupport}
+          className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-sm text-[#FF5E5B] hover:bg-red-500/10 transition-colors"
+        >
+          <span className="text-base">☕</span>
+          <span>Support Pane</span>
+        </button>
         <button
           onClick={onOpenSettings}
           className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-sm text-gray-400 hover:text-gray-200 hover:bg-gray-800/50 transition-colors"
