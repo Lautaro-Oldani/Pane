@@ -8,10 +8,10 @@ export function useClips() {
   const [clips, setClips] = useState<Clip[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<FilterType>("all");
+  const [selectedCollectionId, setSelectedCollectionId] = useState<number | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const offsetRef = useRef(0);
 
-  // Cargar clips iniciales
   useEffect(() => {
     async function load() {
       try {
@@ -31,7 +31,6 @@ export function useClips() {
     load();
   }, []);
 
-  // Escuchar nuevos clips en tiempo real
   useEffect(() => {
     const unlisten = listen<Clip>("new-clip", (event) => {
       setClips((prev) => [event.payload, ...prev]);
@@ -40,7 +39,6 @@ export function useClips() {
     return () => { unlisten.then((fn) => fn()); };
   }, []);
 
-  // Cargar más clips (scroll infinito)
   const loadMore = useCallback(async () => {
     if (!hasMore) return;
     try {
@@ -56,13 +54,11 @@ export function useClips() {
     }
   }, [hasMore]);
 
-  // Borrar un clip
   const deleteClip = useCallback(async (id: number) => {
     await invoke("delete_clip", { id });
     setClips((prev) => prev.filter((c) => c.id !== id));
   }, []);
 
-  // Toggle pin
   const togglePin = useCallback(async (id: number) => {
     const newVal = await invoke<boolean>("toggle_pin", { id });
     setClips((prev) =>
@@ -70,7 +66,6 @@ export function useClips() {
     );
   }, []);
 
-  // Toggle favorite
   const toggleFavorite = useCallback(async (id: number) => {
     const newVal = await invoke<boolean>("toggle_favorite", { id });
     setClips((prev) =>
@@ -78,14 +73,35 @@ export function useClips() {
     );
   }, []);
 
-  // Limpiar historial
   const clearHistory = useCallback(async () => {
     await invoke("clear_history");
     setClips((prev) => prev.filter((c) => c.is_pinned || c.is_favorite));
   }, []);
 
-  // Filtrar clips según el filtro activo
+  // Actualizar collection_id de un clip en el estado local
+  const updateClipCollection = useCallback((clipId: number, collectionId: number | null) => {
+    setClips((prev) =>
+      prev.map((c) => (c.id === clipId ? { ...c, collection_id: collectionId } : c))
+    );
+  }, []);
+
+  // Cambiar filtro (para colecciones se usa setFilter + setSelectedCollectionId)
+  const changeFilter = useCallback((newFilter: FilterType, collectionId?: number) => {
+    if (collectionId !== undefined) {
+      setFilter("all"); // reset type filter
+      setSelectedCollectionId(collectionId);
+    } else {
+      setFilter(newFilter);
+      setSelectedCollectionId(null);
+    }
+  }, []);
+
+  // Filtrar clips
   const filteredClips = clips.filter((clip) => {
+    // Si hay colección seleccionada, filtrar por colección
+    if (selectedCollectionId !== null) {
+      return clip.collection_id === selectedCollectionId;
+    }
     switch (filter) {
       case "pinned": return clip.is_pinned;
       case "favorites": return clip.is_favorite;
@@ -99,12 +115,14 @@ export function useClips() {
     allClips: clips,
     loading,
     filter,
-    setFilter,
+    selectedCollectionId,
+    changeFilter,
     hasMore,
     loadMore,
     deleteClip,
     togglePin,
     toggleFavorite,
     clearHistory,
+    updateClipCollection,
   };
 }

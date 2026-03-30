@@ -6,20 +6,24 @@ interface ClipListProps {
   clips: Clip[];
   selectedIndex: number;
   hasMore: boolean;
+  collections?: { id: number; name: string; icon: string | null }[];
   onLoadMore: () => void;
   onDelete: (id: number) => void;
   onTogglePin: (id: number) => void;
   onToggleFavorite: (id: number) => void;
+  onMoveToCollection?: (clipId: number, collectionId: number | null) => void;
 }
 
 export function ClipList({
   clips,
   selectedIndex,
   hasMore,
+  collections,
   onLoadMore,
   onDelete,
   onTogglePin,
   onToggleFavorite,
+  onMoveToCollection,
 }: ClipListProps) {
   const sentinelRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -64,9 +68,11 @@ export function ClipList({
           key={clip.id}
           clip={clip}
           selected={index === selectedIndex}
+          collections={collections}
           onDelete={onDelete}
           onTogglePin={onTogglePin}
           onToggleFavorite={onToggleFavorite}
+          onMoveToCollection={onMoveToCollection}
         />
       ))}
       {hasMore && (

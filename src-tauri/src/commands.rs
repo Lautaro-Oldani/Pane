@@ -9,7 +9,7 @@ use arboard::Clipboard;
 use tauri::State;
 
 use crate::clipboard::set_skip_next;
-use crate::db::{self, Clip, DbPath};
+use crate::db::{self, Clip, Collection, DbPath};
 
 /// Oculta la ventana y actualiza el flag de visibilidad.
 /// El frontend llama esto en vez de window.hide() directamente
@@ -83,4 +83,31 @@ pub fn copy_to_clipboard(db_path: State<DbPath>, id: i64) -> Result<(), String> 
             Ok(())
         }
     }
+}
+
+// ── Colecciones ──────────────────────────────────────────────────────
+
+#[tauri::command]
+pub fn get_collections(db_path: State<DbPath>) -> Result<Vec<Collection>, String> {
+    db::get_collections(&db_path.0)
+}
+
+#[tauri::command]
+pub fn create_collection(db_path: State<DbPath>, name: String, icon: Option<String>) -> Result<Collection, String> {
+    db::create_collection(&db_path.0, &name, icon.as_deref())
+}
+
+#[tauri::command]
+pub fn delete_collection(db_path: State<DbPath>, id: i64) -> Result<(), String> {
+    db::delete_collection(&db_path.0, id)
+}
+
+#[tauri::command]
+pub fn rename_collection(db_path: State<DbPath>, id: i64, name: String) -> Result<(), String> {
+    db::rename_collection(&db_path.0, id, &name)
+}
+
+#[tauri::command]
+pub fn set_clip_collection(db_path: State<DbPath>, clip_id: i64, collection_id: Option<i64>) -> Result<(), String> {
+    db::set_clip_collection(&db_path.0, clip_id, collection_id)
 }

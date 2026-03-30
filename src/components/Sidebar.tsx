@@ -1,9 +1,15 @@
-import type { FilterType } from "../types";
+import { useState } from "react";
+import type { Collection, FilterType } from "../types";
 
 interface SidebarProps {
   filter: FilterType;
-  onFilterChange: (filter: FilterType) => void;
+  selectedCollectionId: number | null;
+  onFilterChange: (filter: FilterType, collectionId?: number) => void;
   clipCounts: Record<string, number>;
+  collections: Collection[];
+  collectionClipCounts: Record<number, number>;
+  onCreateCollection: (name: string) => void;
+  onDeleteCollection: (id: number) => void;
 }
 
 const NAV_ITEMS: { key: FilterType; label: string; icon: string }[] = [
@@ -20,7 +26,27 @@ const TYPE_ITEMS: { key: FilterType; label: string; icon: string }[] = [
   { key: "color", label: "Colors", icon: "🎨" },
 ];
 
-export function Sidebar({ filter, onFilterChange, clipCounts }: SidebarProps) {
+export function Sidebar({
+  filter,
+  selectedCollectionId,
+  onFilterChange,
+  clipCounts,
+  collections,
+  collectionClipCounts,
+  onCreateCollection,
+  onDeleteCollection,
+}: SidebarProps) {
+  const [showNewInput, setShowNewInput] = useState(false);
+  const [newName, setNewName] = useState("");
+
+  function handleCreate() {
+    const name = newName.trim();
+    if (!name) return;
+    onCreateCollection(name);
+    setNewName("");
+    setShowNewInput(false);
+  }
+
   return (
     <aside className="w-48 bg-gray-950 border-r border-gray-800 flex flex-col h-full">
       <div className="p-3 border-b border-gray-800">
@@ -34,25 +60,71 @@ export function Sidebar({ filter, onFilterChange, clipCounts }: SidebarProps) {
             icon={item.icon}
             label={item.label}
             count={clipCounts[item.key]}
-            active={filter === item.key}
+            active={filter === item.key && selectedCollectionId === null}
             onClick={() => onFilterChange(item.key)}
           />
         ))}
 
         <div className="border-t border-gray-800 my-2" />
-        <p className="text-xs text-gray-500 px-2 py-1 uppercase tracking-wider">
-          Types
-        </p>
-
+        <p className="text-xs text-gray-500 px-2 py-1 uppercase tracking-wider">Types</p>
         {TYPE_ITEMS.map((item) => (
           <NavButton
             key={item.key}
             icon={item.icon}
             label={item.label}
             count={clipCounts[item.key]}
-            active={filter === item.key}
+            active={filter === item.key && selectedCollectionId === null}
             onClick={() => onFilterChange(item.key)}
           />
+        ))}
+
+        {/* Collections */}
+        <div className="border-t border-gray-800 my-2" />
+        <div className="flex items-center justify-between px-2 py-1">
+          <p className="text-xs text-gray-500 uppercase tracking-wider">Collections</p>
+          <button
+            onClick={() => setShowNewInput(true)}
+            className="text-gray-500 hover:text-gray-300 text-sm leading-none"
+            title="New collection"
+          >
+            +
+          </button>
+        </div>
+
+        {showNewInput && (
+          <div className="px-1">
+            <input
+              autoFocus
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleCreate();
+                if (e.key === "Escape") { setShowNewInput(false); setNewName(""); }
+              }}
+              onBlur={() => { if (!newName.trim()) setShowNewInput(false); }}
+              placeholder="Name..."
+              className="w-full bg-gray-800 border border-gray-700 rounded px-2 py-1 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-gray-500"
+            />
+          </div>
+        )}
+
+        {collections.map((col) => (
+          <div key={col.id} className="group flex items-center">
+            <NavButton
+              icon={col.icon || "📁"}
+              label={col.name}
+              count={collectionClipCounts[col.id]}
+              active={selectedCollectionId === col.id}
+              onClick={() => onFilterChange("collection" as FilterType, col.id)}
+            />
+            <button
+              onClick={() => onDeleteCollection(col.id)}
+              className="opacity-0 group-hover:opacity-100 text-gray-600 hover:text-red-400 text-xs px-1 shrink-0"
+              title="Delete collection"
+            >
+              ✕
+            </button>
+          </div>
         ))}
       </nav>
     </aside>
@@ -82,7 +154,7 @@ function NavButton({
       }`}
     >
       <span className="text-base">{icon}</span>
-      <span className="flex-1 text-left">{label}</span>
+      <span className="flex-1 text-left truncate">{label}</span>
       {count !== undefined && count > 0 && (
         <span className="text-xs text-gray-500">{count}</span>
       )}

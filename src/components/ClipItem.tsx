@@ -16,14 +16,17 @@ const TYPE_BADGE: Record<string, { label: string; color: string }> = {
 interface ClipItemProps {
   clip: Clip;
   selected?: boolean;
+  collections?: { id: number; name: string; icon: string | null }[];
   onDelete: (id: number) => void;
   onTogglePin: (id: number) => void;
   onToggleFavorite: (id: number) => void;
+  onMoveToCollection?: (clipId: number, collectionId: number | null) => void;
 }
 
-export function ClipItem({ clip, selected, onDelete, onTogglePin, onToggleFavorite }: ClipItemProps) {
+export function ClipItem({ clip, selected, collections, onDelete, onTogglePin, onToggleFavorite, onMoveToCollection }: ClipItemProps) {
   const [copied, setCopied] = useState(false);
   const [showActions, setShowActions] = useState(false);
+  const [showCollectionMenu, setShowCollectionMenu] = useState(false);
   const badge = TYPE_BADGE[clip.content_type] || TYPE_BADGE.text;
 
   async function handleCopy() {
@@ -83,6 +86,39 @@ export function ClipItem({ clip, selected, onDelete, onTogglePin, onToggleFavori
           >
             ⭐
           </ActionBtn>
+          {collections && collections.length > 0 && (
+            <div className="relative">
+              <ActionBtn
+                title="Move to collection"
+                onClick={() => setShowCollectionMenu((v) => !v)}
+              >
+                📁
+              </ActionBtn>
+              {showCollectionMenu && (
+                <div className="absolute right-0 top-8 bg-gray-800 border border-gray-700 rounded-lg py-1 shadow-xl z-50 min-w-[140px]">
+                  {clip.collection_id && (
+                    <button
+                      onClick={() => { onMoveToCollection?.(clip.id, null); setShowCollectionMenu(false); }}
+                      className="w-full text-left px-3 py-1.5 text-xs text-gray-400 hover:bg-gray-700 hover:text-white"
+                    >
+                      Remove from collection
+                    </button>
+                  )}
+                  {collections.map((col) => (
+                    <button
+                      key={col.id}
+                      onClick={() => { onMoveToCollection?.(clip.id, col.id); setShowCollectionMenu(false); }}
+                      className={`w-full text-left px-3 py-1.5 text-xs hover:bg-gray-700 ${
+                        clip.collection_id === col.id ? "text-blue-400" : "text-gray-300 hover:text-white"
+                      }`}
+                    >
+                      {col.icon || "📁"} {col.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
           <ActionBtn title="Delete" onClick={() => onDelete(clip.id)}>
             🗑️
           </ActionBtn>

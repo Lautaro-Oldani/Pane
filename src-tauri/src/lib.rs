@@ -155,6 +155,11 @@ pub fn run() {
             commands::clear_history,
             commands::copy_to_clipboard,
             commands::hide_app_window,
+            commands::get_collections,
+            commands::create_collection,
+            commands::delete_collection,
+            commands::rename_collection,
+            commands::set_clip_collection,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
