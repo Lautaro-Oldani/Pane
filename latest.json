@@ -1,11 +1,11 @@
 {
-  "version": "0.1.5",
-  "notes": "Text Expansion shortcuts, sidebar navigation fixes",
-  "pub_date": "2026-03-31T15:30:00Z",
+  "version": "0.1.6",
+  "notes": "Fix: shortcuts now work with any keyboard layout (Spanish, etc.)",
+  "pub_date": "2026-03-31T16:30:00Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVRMHAzZEJaTzVLT0JIb01nOWQ4Q25lQnpXSy84YnJFQytFenNZMFN1MFNsMldreUx5N2U5cHFGZWFDajFYeGw4cnlJa2JUWW1mT3kyM01TUEdsdVpXU0RTY2dpOUZVQndvPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzc0OTc3NzQzCWZpbGU6UGFuZV8wLjEuNV94NjQtc2V0dXAuZXhlCm80dHpDOFFpMHlFdDEwdzZZU3JTT2owMGdTRXFRZm9CdnVMZUhKVDRZUkpJUzRvVWliWUp0ekR2UU5hdVlneXZMWXdua0ZFM2l4ay9jVDdWcWNoakJnPT0K",
-      "url": "https://github.com/Lautaro-Oldani/Pane/releases/download/v0.1.5/Pane_0.1.5_x64-setup.exe"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVRMHAzZEJaTzVLT1BZZzFUMGlkMEFYQWpWM3F2YkpuSFNTSk9uM2x5YjZvVFBSTS94cVFoeWhkZ2NvNFBrQ0lkVzhEZWdyZlNiR1JaVXBIckFYbkFpSExNSS9mbm1hcHdjPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzc0OTgxMjg2CWZpbGU6UGFuZV8wLjEuNl94NjQtc2V0dXAuZXhlCkhTdXN2Y1Z0SGFWUldJYTljdFAyZnpUcUp3NTNxU0RCeWN2QUpQdWpsQ3pkVzI1RnI4TFc2RFY3d2NvVVVheThlNXptNHhVNkF1bWplaXlGd2dYYkNBPT0K",
+      "url": "https://github.com/Lautaro-Oldani/Pane/releases/download/v0.1.6/Pane_0.1.6_x64-setup.exe"
     }
   }
 }
