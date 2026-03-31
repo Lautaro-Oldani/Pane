@@ -1,11 +1,11 @@
 {
-  "version": "0.1.3",
-  "notes": "Version in Settings, no more fullscreen disruption, window stays open until you close it",
-  "pub_date": "2026-03-31T01:00:00Z",
+  "version": "0.1.4",
+  "notes": "Sidebar closes Settings/Support, cleaner auto-clear text",
+  "pub_date": "2026-03-31T14:30:00Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVRMHAzZEJaTzVLT0lFZ09IOUxsOXFYYWhTSFBpQyt0RzUzMlVHU1k1Q2J5MVBNRVFyNjNoc3FZeXRka3pkRDVNcU0yUktOTnd2Z21LSnV2bGdISkczOWtoTlovanVEN0FJPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzc0OTE4MTk1CWZpbGU6UGFuZV8wLjEuM194NjQtc2V0dXAuZXhlCi9jbzFIVlAwU1o1cTYyUjlvWEVHL2JHNzAzN3lWd2k2U2VoSjNYUkJHZEJvdUJQdVZ0RjlxUmRyOEJLVW11TERFQkYvdWhoLzY2UmpZSjhHZUl1b0FnPT0K",
-      "url": "https://github.com/Lautaro-Oldani/Pane/releases/download/v0.1.3/Pane_0.1.3_x64-setup.exe"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVRMHAzZEJaTzVLT0E0S1YrQm90YTJ4T0hreXVkVFlDbG9veVVkY2FXdjZGNlBtYnoya1lhWkdUNVM5VWs3ZjRxTTZ3THczY0puMnFtZ09vYzB3a3RZa3FWOEJOdUFNR1E0PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzc0OTY2ODI3CWZpbGU6UGFuZV8wLjEuNF94NjQtc2V0dXAuZXhlClh6dXJvd2JXSlBYVm41NmxLZjRXdkhSRmtMWUZhWWdJNUNxQVo3TXFxcWZpdGExOEtPMnhxVUJsUldjeDg1eHBoQzNFOHRWUzg3QkgxQWJqOVdMVUNBPT0K",
+      "url": "https://github.com/Lautaro-Oldani/Pane/releases/download/v0.1.4/Pane_0.1.4_x64-setup.exe"
     }
   }
 }
