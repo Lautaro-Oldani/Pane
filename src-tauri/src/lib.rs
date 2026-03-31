@@ -29,22 +29,20 @@ fn get_migrations() -> Vec<Migration> {
     }]
 }
 
-/// Muestra la ventana principal: restaura, centra, foco, always on top.
+/// Muestra la ventana principal: restaura, centra, foco.
 fn show_window(app: &tauri::AppHandle) {
     if let Some(window) = app.get_webview_window("main") {
         let _ = window.unminimize();
         let _ = window.show();
         let _ = window.center();
-        let _ = window.set_always_on_top(true);
         let _ = window.set_focus();
         WINDOW_VISIBLE.store(true, Ordering::Relaxed);
     }
 }
 
-/// Oculta la ventana principal y quita always on top.
+/// Oculta la ventana principal.
 fn hide_window(app: &tauri::AppHandle) {
     if let Some(window) = app.get_webview_window("main") {
-        let _ = window.set_always_on_top(false);
         let _ = window.hide();
         WINDOW_VISIBLE.store(false, Ordering::Relaxed);
     }
@@ -152,10 +150,12 @@ pub fn run() {
                     CANCEL_HIDE.store(false, Ordering::Relaxed);
                     let app_handle = window.app_handle().clone();
                     std::thread::spawn(move || {
-                        // Esperar 150ms — si recupera foco, se cancela
                         std::thread::sleep(std::time::Duration::from_millis(150));
                         if !CANCEL_HIDE.load(Ordering::Relaxed) {
-                            hide_window(&app_handle);
+                            if let Some(w) = app_handle.get_webview_window("main") {
+                                let _ = w.hide();
+                                WINDOW_VISIBLE.store(false, Ordering::Relaxed);
+                            }
                         }
                     });
                 }
