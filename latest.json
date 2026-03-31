@@ -1,11 +1,11 @@
 {
-  "version": "0.1.4",
-  "notes": "Sidebar closes Settings/Support, cleaner auto-clear text",
-  "pub_date": "2026-03-31T14:30:00Z",
+  "version": "0.1.5",
+  "notes": "Text Expansion shortcuts, sidebar navigation fixes",
+  "pub_date": "2026-03-31T15:30:00Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVRMHAzZEJaTzVLT0E0S1YrQm90YTJ4T0hreXVkVFlDbG9veVVkY2FXdjZGNlBtYnoya1lhWkdUNVM5VWs3ZjRxTTZ3THczY0puMnFtZ09vYzB3a3RZa3FWOEJOdUFNR1E0PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzc0OTY2ODI3CWZpbGU6UGFuZV8wLjEuNF94NjQtc2V0dXAuZXhlClh6dXJvd2JXSlBYVm41NmxLZjRXdkhSRmtMWUZhWWdJNUNxQVo3TXFxcWZpdGExOEtPMnhxVUJsUldjeDg1eHBoQzNFOHRWUzg3QkgxQWJqOVdMVUNBPT0K",
-      "url": "https://github.com/Lautaro-Oldani/Pane/releases/download/v0.1.4/Pane_0.1.4_x64-setup.exe"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVRMHAzZEJaTzVLT0JIb01nOWQ4Q25lQnpXSy84YnJFQytFenNZMFN1MFNsMldreUx5N2U5cHFGZWFDajFYeGw4cnlJa2JUWW1mT3kyM01TUEdsdVpXU0RTY2dpOUZVQndvPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzc0OTc3NzQzCWZpbGU6UGFuZV8wLjEuNV94NjQtc2V0dXAuZXhlCm80dHpDOFFpMHlFdDEwdzZZU3JTT2owMGdTRXFRZm9CdnVMZUhKVDRZUkpJUzRvVWliWUp0ekR2UU5hdVlneXZMWXdua0ZFM2l4ay9jVDdWcWNoakJnPT0K",
+      "url": "https://github.com/Lautaro-Oldani/Pane/releases/download/v0.1.5/Pane_0.1.5_x64-setup.exe"
     }
   }
 }
