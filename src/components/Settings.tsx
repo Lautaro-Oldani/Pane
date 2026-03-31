@@ -1,4 +1,12 @@
+import { getVersion } from "@tauri-apps/api/app";
+import { useEffect, useState } from "react";
 import type { AppSettings } from "../hooks/useSettings";
+
+function useAppVersion() {
+  const [version, setVersion] = useState("");
+  useEffect(() => { getVersion().then(setVersion).catch(() => setVersion("unknown")); }, []);
+  return version;
+}
 
 interface SettingsProps {
   settings: AppSettings;
@@ -7,6 +15,7 @@ interface SettingsProps {
 }
 
 export function Settings({ settings, onUpdate, onClose }: SettingsProps) {
+  const APP_VERSION = useAppVersion();
   return (
     <div className="flex-1 overflow-y-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -99,6 +108,13 @@ export function Settings({ settings, onUpdate, onClose }: SettingsProps) {
           />
         </button>
       </SettingRow>
+
+      {/* Version */}
+      <div className="pt-4 border-t border-gray-800">
+        <p className="text-xs text-gray-500 text-center">
+          Pane v{APP_VERSION}
+        </p>
+      </div>
     </div>
   );
 }
