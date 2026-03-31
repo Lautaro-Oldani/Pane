@@ -145,25 +145,7 @@ pub fn run() {
                     let _ = window.hide();
                     WINDOW_VISIBLE.store(false, Ordering::Relaxed);
                 }
-                // Perdió foco → ocultar con delay (evita cerrar durante resize)
-                tauri::WindowEvent::Focused(false) => {
-                    CANCEL_HIDE.store(false, Ordering::Relaxed);
-                    let app_handle = window.app_handle().clone();
-                    std::thread::spawn(move || {
-                        std::thread::sleep(std::time::Duration::from_millis(150));
-                        if !CANCEL_HIDE.load(Ordering::Relaxed) {
-                            if let Some(w) = app_handle.get_webview_window("main") {
-                                let _ = w.hide();
-                                WINDOW_VISIBLE.store(false, Ordering::Relaxed);
-                            }
-                        }
-                    });
-                }
-                // Ganó foco → cancelar hide pendiente
-                tauri::WindowEvent::Focused(true) => {
-                    CANCEL_HIDE.store(true, Ordering::Relaxed);
-                    WINDOW_VISIBLE.store(true, Ordering::Relaxed);
-                }
+                _ => {}
                 _ => {}
             }
         })
