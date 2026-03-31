@@ -454,6 +454,82 @@ pub fn run_cleanup(path: &PathBuf) -> Result<(), String> {
 
 // ── Clips (continuación) ────────────────────────────────────────────
 
+// ── Shortcuts (Text Expansion) ───────────────────────────────────────
+
+/// Estructura que representa un shortcut de text expansion.
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Shortcut {
+    pub id: i64,
+    pub trigger: String,
+    pub content: String,
+    pub created_at: String,
+}
+
+/// Obtiene todos los shortcuts.
+pub fn get_shortcuts(path: &PathBuf) -> Result<Vec<Shortcut>, String> {
+    let conn = open(path)?;
+    let mut stmt = conn
+        .prepare("SELECT id, trigger, content, created_at FROM shortcuts ORDER BY trigger")
+        .map_err(|e| format!("Prepare error: {e}"))?;
+
+    let shortcuts: Vec<Shortcut> = stmt
+        .query_map([], |row| Ok(Shortcut {
+            id: row.get(0)?,
+            trigger: row.get(1)?,
+            content: row.get(2)?,
+            created_at: row.get(3)?,
+        }))
+        .map_err(|e| format!("Query error: {e}"))?
+        .collect::<Result<Vec<_>, _>>()
+        .map_err(|e| format!("Row error: {e}"))?;
+
+    Ok(shortcuts)
+}
+
+/// Crea un nuevo shortcut.
+pub fn create_shortcut(path: &PathBuf, trigger: &str, content: &str) -> Result<Shortcut, String> {
+    let conn = open(path)?;
+    conn.execute(
+        "INSERT INTO shortcuts (trigger, content) VALUES (?1, ?2)",
+        params![trigger, content],
+    )
+    .map_err(|e| format!("Insert error: {e}"))?;
+
+    let id = conn.last_insert_rowid();
+    conn.query_row(
+        "SELECT id, trigger, content, created_at FROM shortcuts WHERE id = ?1",
+        params![id],
+        |row| Ok(Shortcut {
+            id: row.get(0)?,
+            trigger: row.get(1)?,
+            content: row.get(2)?,
+            created_at: row.get(3)?,
+        }),
+    )
+    .map_err(|e| format!("Query error: {e}"))
+}
+
+/// Elimina un shortcut por ID.
+pub fn delete_shortcut(path: &PathBuf, id: i64) -> Result<(), String> {
+    let conn = open(path)?;
+    conn.execute("DELETE FROM shortcuts WHERE id = ?1", params![id])
+        .map_err(|e| format!("Delete error: {e}"))?;
+    Ok(())
+}
+
+/// Actualiza un shortcut existente.
+pub fn update_shortcut(path: &PathBuf, id: i64, trigger: &str, content: &str) -> Result<(), String> {
+    let conn = open(path)?;
+    conn.execute(
+        "UPDATE shortcuts SET trigger = ?1, content = ?2 WHERE id = ?3",
+        params![trigger, content, id],
+    )
+    .map_err(|e| format!("Update error: {e}"))?;
+    Ok(())
+}
+
+// ── Clips (continuación) ────────────────────────────────────────────
+
 /// Obtiene un clip por ID. Se usa en copy_to_clipboard para leer el contenido.
 pub fn get_clip_by_id(path: &PathBuf, id: i64) -> Result<Clip, String> {
     let conn = open(path)?;

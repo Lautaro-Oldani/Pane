@@ -10,7 +10,8 @@ use tauri::State;
 use tauri_plugin_autostart::ManagerExt as AutostartManagerExt;
 
 use crate::clipboard::set_skip_next;
-use crate::db::{self, Clip, Collection, DbPath};
+use crate::db::{self, Clip, Collection, DbPath, Shortcut};
+use crate::expander;
 
 /// Oculta la ventana y actualiza el flag de visibilidad.
 /// El frontend llama esto en vez de window.hide() directamente
@@ -148,4 +149,32 @@ pub fn set_clip_collection(
     collection_id: Option<i64>,
 ) -> Result<(), String> {
     db::set_clip_collection(&db_path.0, clip_id, collection_id)
+}
+
+// ── Shortcuts (Text Expansion) ───────────────────────────────────────
+
+#[tauri::command]
+pub fn get_shortcuts(db_path: State<DbPath>) -> Result<Vec<Shortcut>, String> {
+    db::get_shortcuts(&db_path.0)
+}
+
+#[tauri::command]
+pub fn create_shortcut(db_path: State<DbPath>, trigger: String, content: String) -> Result<Shortcut, String> {
+    let shortcut = db::create_shortcut(&db_path.0, &trigger, &content)?;
+    expander::reload_shortcuts(); // Actualizar el expander en tiempo real
+    Ok(shortcut)
+}
+
+#[tauri::command]
+pub fn delete_shortcut(db_path: State<DbPath>, id: i64) -> Result<(), String> {
+    db::delete_shortcut(&db_path.0, id)?;
+    expander::reload_shortcuts();
+    Ok(())
+}
+
+#[tauri::command]
+pub fn update_shortcut(db_path: State<DbPath>, id: i64, trigger: String, content: String) -> Result<(), String> {
+    db::update_shortcut(&db_path.0, id, &trigger, &content)?;
+    expander::reload_shortcuts();
+    Ok(())
 }

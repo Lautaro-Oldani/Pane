@@ -11,7 +11,9 @@ import { SearchBar } from "./components/SearchBar";
 import { ClipList } from "./components/ClipList";
 import { Settings } from "./components/Settings";
 import { SupportCard } from "./components/SupportCard";
+import { Shortcuts } from "./components/Shortcuts";
 import { UpdateBanner } from "./components/UpdateBanner";
+import { useShortcuts } from "./hooks/useShortcuts";
 import "./App.css";
 
 function App() {
@@ -63,8 +65,10 @@ function MainView() {
   const { settings, updateSetting } = useSettings();
   const theme = useTheme(settings.theme);
   const { query, setQuery, results } = useSearch(clips);
+  const { shortcuts, createShortcut, deleteShortcut, updateShortcut } = useShortcuts();
   const [showSettings, setShowSettings] = useState(false);
   const [showSupport, setShowSupport] = useState(false);
+  const [showShortcuts, setShowShortcuts] = useState(false);
 
   // Keyboard navigation
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -139,14 +143,15 @@ function MainView() {
       <Sidebar
         filter={filter}
         selectedCollectionId={selectedCollectionId}
-        onFilterChange={(...args) => { setShowSettings(false); setShowSupport(false); changeFilter(...args); }}
+        onFilterChange={(...args) => { setShowSettings(false); setShowSupport(false); setShowShortcuts(false); changeFilter(...args); }}
         clipCounts={clipCounts}
         collections={collections}
         collectionClipCounts={collectionClipCounts}
         onCreateCollection={createCollection}
         onDeleteCollection={deleteCollection}
-        onOpenSettings={() => { setShowSettings(true); setShowSupport(false); }}
-        onOpenSupport={() => { setShowSupport(true); setShowSettings(false); }}
+        onOpenSettings={() => { setShowSettings(true); setShowSupport(false); setShowShortcuts(false); }}
+        onOpenSupport={() => { setShowSupport(true); setShowSettings(false); setShowShortcuts(false); }}
+        onOpenShortcuts={() => { setShowShortcuts(true); setShowSettings(false); setShowSupport(false); }}
       />
       <main className="flex-1 flex flex-col min-w-0">
         <UpdateBanner />
@@ -158,6 +163,14 @@ function MainView() {
           />
         ) : showSupport ? (
           <SupportCard onClose={() => setShowSupport(false)} />
+        ) : showShortcuts ? (
+          <Shortcuts
+            shortcuts={shortcuts}
+            onCreate={createShortcut}
+            onDelete={deleteShortcut}
+            onUpdate={updateShortcut}
+            onClose={() => setShowShortcuts(false)}
+          />
         ) : (
           <>
             <div className="px-4 py-3 border-b theme-border space-y-2">

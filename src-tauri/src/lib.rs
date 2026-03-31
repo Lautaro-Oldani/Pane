@@ -5,6 +5,7 @@ mod categories;
 mod clipboard;
 mod commands;
 mod db;
+mod expander;
 
 use db::DbPath;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -21,12 +22,20 @@ static WINDOW_VISIBLE: AtomicBool = AtomicBool::new(false);
 static CANCEL_HIDE: AtomicBool = AtomicBool::new(false);
 
 fn get_migrations() -> Vec<Migration> {
-    vec![Migration {
-        version: 1,
-        description: "create clips, collections, and settings tables",
-        sql: include_str!("../migrations/001.sql"),
-        kind: MigrationKind::Up,
-    }]
+    vec![
+        Migration {
+            version: 1,
+            description: "create clips, collections, and settings tables",
+            sql: include_str!("../migrations/001.sql"),
+            kind: MigrationKind::Up,
+        },
+        Migration {
+            version: 2,
+            description: "create shortcuts table for text expansion",
+            sql: include_str!("../migrations/002.sql"),
+            kind: MigrationKind::Up,
+        },
+    ]
 }
 
 /// Muestra la ventana principal: restaura, centra, foco.
@@ -83,7 +92,10 @@ pub fn run() {
             db::run_cleanup(&db_path)?;
 
             // ── Clipboard monitor ──
-            clipboard::start_clipboard_monitor(app.handle().clone(), db_path);
+            clipboard::start_clipboard_monitor(app.handle().clone(), db_path.clone());
+
+            // ── Text Expander (shortcuts) ──
+            expander::start_expander(db_path);
 
             // ── Mostrar ventana al iniciar ──
             show_window(app.handle());
@@ -165,6 +177,10 @@ pub fn run() {
             commands::delete_collection,
             commands::rename_collection,
             commands::set_clip_collection,
+            commands::get_shortcuts,
+            commands::create_shortcut,
+            commands::delete_shortcut,
+            commands::update_shortcut,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
