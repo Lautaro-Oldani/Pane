@@ -48,7 +48,7 @@ export function Settings({ settings, onUpdate, onClose }: SettingsProps) {
       {/* Auto-clear */}
       <SettingRow
         label="Auto-clear after"
-        description="Delete clips older than this (0 = never)"
+        description="Delete clips older than this"
       >
         <select
           value={settings.auto_clear_days}

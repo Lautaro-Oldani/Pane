@@ -139,7 +139,7 @@ function MainView() {
       <Sidebar
         filter={filter}
         selectedCollectionId={selectedCollectionId}
-        onFilterChange={changeFilter}
+        onFilterChange={(...args) => { setShowSettings(false); setShowSupport(false); changeFilter(...args); }}
         clipCounts={clipCounts}
         collections={collections}
         collectionClipCounts={collectionClipCounts}
